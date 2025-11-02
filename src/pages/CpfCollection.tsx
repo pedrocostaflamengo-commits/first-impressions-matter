@@ -17,7 +17,8 @@ export default function CpfCollection() {
     e.preventDefault();
     // Store data in sessionStorage for the funnel
     sessionStorage.setItem("userData", JSON.stringify(formData));
-    navigate("/verificacao");
+    // ALTERADO: Redireciona para a nova página de confirmação de data de nascimento
+    navigate("/confirmacao");
   };
 
   const formatCPF = (value: string) => {
