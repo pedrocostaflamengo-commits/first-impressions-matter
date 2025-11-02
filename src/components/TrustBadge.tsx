@@ -20,7 +20,8 @@ export const TrustBadge = ({ variant = "security", text, className }: TrustBadge
     <div className={cn(
       "inline-flex items-center gap-2 px-4 py-2 rounded-full",
       "bg-secondary/10 border border-secondary/20",
-      "text-sm font-medium text-secondary",
+      // ALTERADO: Adicionado md:text-base para proporção
+      "text-sm md:text-base font-medium text-secondary",
       className
     )}>
       <Icon className="w-4 h-4" />
