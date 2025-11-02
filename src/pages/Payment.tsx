@@ -23,17 +23,21 @@ export default function Payment() {
   const navigate = useNavigate();
   const [pixCopied, setPixCopied] = useState(false);
   
+  // States para o PIX dinâmico
   const [isLoadingPix, setIsLoadingPix] = useState(true);
-  const [pixCopyPaste, setPixCopyPaste] = useState(""); 
+  const [pixCopyPaste, setPixCopyPaste] = useState(""); // Começa vazio
   
+  // Dados do usuário (fixos, conforme solicitado)
   const userName = "PEDRO HENRIQUE COSTA SOUSA";
   const userCpf = "111.097.675-52";
   const userWhatsApp = "(73) 99927-6645";
   const paymentAmount = "39.90";
 
+  // ADICIONADO: Ref para guardar o timer
   const pixTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Apenas verifica se a sessão existe
     const userData = sessionStorage.getItem("userData");
     const whatsapp = sessionStorage.getItem("whatsapp");
     if (!userData || !whatsapp) {
@@ -41,11 +45,13 @@ export default function Payment() {
       return;
     }
 
+    // Função para buscar os dados do PIX na API
     const generatePix = async () => {
       console.log("Gerando novo PIX...");
       setIsLoadingPix(true);
-      setPixCopyPaste(""); 
+      setPixCopyPaste(""); // Limpa o PIX anterior
       
+      // Limpa timer anterior, se existir
       if (pixTimerRef.current) {
         clearTimeout(pixTimerRef.current);
       }
@@ -77,8 +83,11 @@ export default function Payment() {
         }
 
         const data = await response.json();
+        
+        // Salva o CÓDIGO (copia e cola)
         setPixCopyPaste(data.qr_code);
 
+        // ADICIONADO: Agenda a próxima geração de PIX
         pixTimerRef.current = setTimeout(generatePix, PIX_EXPIRATION_MS);
 
       } catch (error) {
@@ -92,17 +101,19 @@ export default function Payment() {
       }
     };
 
-    generatePix();
+    generatePix(); // Gera o PIX na primeira carga
     
+    // ADICIONADO: Limpa o timer quando o componente é desmontado
     return () => {
       if (pixTimerRef.current) {
         clearTimeout(pixTimerRef.current);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]);
+  }, [navigate]); // Dependência de navegação está ok
 
   const handleCopyPix = () => {
+    // CORRIGIDO: Lógica do botão
     if (isLoadingPix || !pixCopyPaste || pixCopyPaste.startsWith("Erro")) return;
     
     navigator.clipboard.writeText(pixCopyPaste);
@@ -113,6 +124,7 @@ export default function Payment() {
     setTimeout(() => setPixCopied(false), 3000);
   };
   
+  // ALTERADO: Adicionado handler para botão "Já paguei"
   const handleCheckPayment = () => {
     toast.error("Pagamento não identificado", {
       description: "Seu pagamento ainda não foi confirmado. Por favor, aguarde alguns minutos e tente novamente.",
@@ -120,6 +132,7 @@ export default function Payment() {
     });
   };
   
+  // Define se o PIX está em um estado válido
   const isPixValid = !isLoadingPix && pixCopyPaste && !pixCopyPaste.startsWith("Erro");
 
   return (
@@ -192,16 +205,17 @@ export default function Payment() {
                     <span className="font-semibold">Gerando PIX...</span>
                   </div>
                 ) : isPixValid ? (
+                  // ADICIONADO: Gerador de QR Code
                   <QRCodeCanvas 
                     value={pixCopyPaste} 
-                    size={208} 
+                    size={208} // Tamanho interno do QR Code (para caber no padding)
                     bgColor="#ffffff"
                     fgColor="#000000"
                     level="L"
                     includeMargin={false}
                   />
                 ) : (
-                  // CORRIGIDO: Mensagem de erro
+                  // CORRIGIDO: Mensagem de erro usa AlertTriangle
                   <div className="flex flex-col items-center gap-4 text-destructive">
                     <AlertTriangle className="w-12 h-12" />
                     <span className="font-semibold text-center">Erro ao gerar QR Code.<br/>Atualize a página.</span>
@@ -225,7 +239,7 @@ export default function Payment() {
                 {isLoadingPix ? (
                   <Skeleton className="h-5 w-full" />
                 ) : (
-                  pixCopyPaste || "..."
+                  pixCopyPaste || "..." // Mostra "..." se estiver vazio após o loading
                 )}
               </div>
               
@@ -234,6 +248,7 @@ export default function Payment() {
                 onClick={handleCopyPix}
                 size="lg"
                 className="w-full bg-primary hover:bg-primary-hover font-bold transition-all duration-300 text-4xl h-auto py-5" // text-4xl
+                // CORRIGIDO: Lógica do disabled
                 disabled={!isPixValid}
               >
                 {pixCopied ? (
@@ -257,6 +272,7 @@ export default function Payment() {
             <TrustBadge variant="security" text="Pagamento seguro" />
           </div>
 
+          {/* Benefits */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 pt-4">
             <div className="text-center p-3 md:p-4 bg-success/5 rounded-lg border border-success/20">
               <CheckCircle2 className="w-5 h-5 md:w-6 md:h-6 text-success mx-auto mb-2" />
@@ -305,6 +321,7 @@ export default function Payment() {
         </Collapsible>
 
         {/* Action Button */}
+        {/* ALTERADO: Adicionado onClick */}
         <div className="animate-slide-up">
           <Button 
             size="lg"
