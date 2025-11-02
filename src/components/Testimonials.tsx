@@ -58,7 +58,7 @@ export function Testimonials() {
             {averageRating}
           </span>
           <span className="text-sm text-muted-foreground">
-            ({totalReviews} avaliações)
+            ({totalReviews.toLocaleString('pt-BR')} avaliações)
           </span>
         </div>
       </div>
