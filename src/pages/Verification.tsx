@@ -7,8 +7,10 @@ export default function Verification() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Verifica se os dados do CPF e da data de nascimento existem
     const userData = sessionStorage.getItem("userData");
-    if (!userData) {
+    const birthDate = sessionStorage.getItem("userBirthDate");
+    if (!userData || !birthDate) {
       navigate("/");
     }
   }, [navigate]);
@@ -16,7 +18,8 @@ export default function Verification() {
   const handleVerificationComplete = () => {
     setIsLoading(false);
     setTimeout(() => {
-      navigate("/confirmacao");
+      // ALTERADO: Navega para a página de resultado
+      navigate("/resultado");
     }, 500);
   };
 
