@@ -8,8 +8,8 @@ import { Testimonials } from "@/components/Testimonials";
 
 export default function OfferResult() {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState("");
-  const [userCpf, setUserCpf] = useState("");
+  const [userName, setUserName] = useState("Cliente");
+  const [userCpf, setUserCpf] = useState("***.***.***-**");
 
   useEffect(() => {
     const userData = sessionStorage.getItem("userData");
@@ -17,8 +17,6 @@ export default function OfferResult() {
       navigate("/");
       return;
     }
-    // Mantemos a lógica original para o caso de o nome ser usado em outro lugar,
-    // mas o texto principal será estático como solicitado.
     const { name, cpf } = JSON.parse(userData);
     setUserName(name.split(" ")[0]);
     setUserCpf(cpf);
@@ -34,16 +32,15 @@ export default function OfferResult() {
               <AlertTriangle className="w-8 h-8 text-destructive" />
             </div>
             <div className="flex-1">
+              {/* ALTERADO: Texto do alerta */}
               <h2 className="text-2xl md:text-3xl font-bold text-destructive mb-3">
-                PEDRO, Encontramos registros de dívidas no seu CPF 111.097.675-52
-                que estão negativando seu nome!
+                {userName}, identificamos registros de inadimplência vinculados
+                ao seu CPF {userCpf}, que estão impactando negativamente o
+                seu histórico de crédito.
               </h2>
               <p className="text-base md:text-lg text-foreground">
-                Seu CPF está impedido de fazer financiamentos, parcelamentos e
-                créditos. Mas você pode resolver isso{" "}
-                <span className="font-bold text-destructive text-xl md:text-2xl">
-                  AGORA com 90% de desconto.
-                </span>
+                Atualmente, seu CPF está restrito para operações de
+                financiamento, parcelamento e obtenção de crédito.
               </p>
             </div>
           </div>
@@ -55,27 +52,30 @@ export default function OfferResult() {
             Agora você pode:
           </h3>
 
+          {/* ALTERADO: Lista de benefícios */}
           <div className="grid gap-4 md:gap-5">
             {[
               {
                 icon: CheckCircle2,
-                text: "Negociar todas as suas dívidas com 90% de desconto",
-              },
-              { icon: Clock, text: "Voltar a ter crédito em até 72h" },
-              {
-                icon: CheckCircle2,
-                text: "Poder voltar á fazer financiamentos, e parcelamentos",
+                text: "✅ Negocie todas as suas dívidas com até 90% de desconto",
               },
               {
                 icon: Zap,
-                text: "Eliminar restrições no seu CPF automaticamente",
+                text: "⚡ Recupere seu crédito em até 72 horas",
+              },
+              {
+                icon: CheckCircle2,
+                text: "🏠 Volte a realizar financiamentos e parcelamentos",
+              },
+              {
+                icon: CheckCircle2,
+                text: "🧾 Elimine automaticamente as restrições do seu CPF",
               },
             ].map((benefit, index) => (
               <div
                 key={index}
                 className="flex items-start gap-3 md:gap-4 p-4 md:p-5 bg-success/10 rounded-lg border-2 border-success/30"
               >
-                <benefit.icon className="w-6 h-6 md:w-7 md:h-7 text-success flex-shrink-0 mt-0.5 md:mt-1" />
                 <p className="text-base md:text-lg text-foreground font-semibold">
                   {benefit.text}
                 </p>
@@ -98,8 +98,10 @@ export default function OfferResult() {
               </p>
             </div>
 
+            {/* ALTERADO: Texto da oferta */}
             <h3 className="text-2xl md:text-3xl font-bold text-foreground">
-              Sua MEGA oferta foi liberada com um valor muito especial!
+              Sua mega oferta exclusiva foi liberada com um valor especial
+              imperdível!
             </h3>
 
             {/* Bloco de Preço Alterado */}
@@ -123,12 +125,13 @@ export default function OfferResult() {
                   R$ 39,90
                 </p>
               </div>
+              {/* ALTERADO: Texto da validade da oferta */}
               <p className="text-base md:text-lg font-bold text-destructive bg-destructive/10 py-3 px-4 rounded-lg border border-destructive/30">
-                Oferta valida somente para pagamentos feitos em até 1 hora,
-                Então corra!
+                ⏰ Atenção! Esta oferta é válida somente para pagamentos
+                realizados em até 1 hora.
               </p>
             </div>
-            
+
             <div className="flex justify-center pt-2">
               <CountdownTimer initialMinutes={60} />
             </div>
@@ -148,6 +151,8 @@ export default function OfferResult() {
             <TrustBadge variant="guarantee" text="Garantia" />
           </div>
         </div>
+        
+        {/* ALTERADO: Bloco de avaliações duplicado removido */}
       </div>
     </div>
   );
