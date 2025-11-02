@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Copy,
-  QrCode,
   CheckCircle2,
   HelpCircle,
   ChevronDown,
@@ -16,7 +15,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-// ADICIONADO: Skeleton para o estado de carregamento
 import { Skeleton } from "@/components/ui/skeleton";
 
 // Token da sua API
@@ -27,19 +25,18 @@ export default function Payment() {
   const navigate = useNavigate();
   const [pixCopied, setPixCopied] = useState(false);
 
-  // --- NOVOS ESTADOS ---
+  // --- ESTADOS ---
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Dados do PIX gerado pela API
+  // Dados do PIX gerado pela API (AGORA APENAS O CÓDIGO)
   const [pixCode, setPixCode] = useState("");
-  const [qrCodeImage, setQrCodeImage] = useState(""); // Assumindo que a API retorna um base64
   
   // Dados do usuário vindos da sessão
   const [userName, setUserName] = useState("Cliente");
   const [userCpf, setUserCpf] = useState("***.***.***-**");
   const [userWhatsApp, setUserWhatsApp] = useState("(**) *****-****");
-  // --- FIM NOVOS ESTADOS ---
+  // --- FIM ESTADOS ---
 
   useEffect(() => {
     const userDataString = sessionStorage.getItem("userData");
@@ -57,7 +54,7 @@ export default function Payment() {
       setUserCpf(parsedData.cpf || "***.***.***-**");
       setUserWhatsApp(whatsappString || "(**) *****-****");
 
-      // Inicia a geração do PIX assim que os dados forem carregados
+      // Inicia a geração do PIX
       generatePix(parsedData.name, parsedData.cpf);
       
     } catch (e) {
@@ -67,12 +64,11 @@ export default function Payment() {
     }
   }, [navigate]);
 
-  // --- NOVA FUNÇÃO PARA GERAR PIX ---
+  // --- FUNÇÃO PARA GERAR PIX (CORRIGIDA) ---
   const generatePix = async (name: string, cpf: string) => {
     setIsLoading(true);
     setError(null);
 
-    // Remove formatação do CPF para a API
     const document = cpf.replace(/\D/g, "");
 
     const payload = {
@@ -94,18 +90,20 @@ export default function Payment() {
       });
 
       if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Erro da API:", errorData);
         throw new Error(`Erro na API: ${response.statusText}`);
       }
 
       const data = await response.json();
 
-      // **IMPORTANTE**: Estou assumindo que a API retorna 'pix_copia_cola' e 'qr_code_base64'
-      // Se os nomes dos campos forem outros, ajuste aqui:
-      if (data.pix_copia_cola && data.qr_code_base64) {
-        setPixCode(data.pix_copia_cola);
-        setQrCodeImage(data.qr_code_base64); // Ex: "data:image/png;base64,iVBORw0..."
+      // **CORREÇÃO IMPORTANTE**: 
+      // 1. O campo correto é 'qr_code', conforme seu código Java.
+      // 2. A API não retorna 'qr_code_base64', removemos essa lógica.
+      if (data.qr_code) {
+        setPixCode(data.qr_code); // Este é o PIX Copia e Cola
       } else {
-        throw new Error("Resposta da API inválida. Campos esperados não encontrados.");
+        throw new Error("Resposta da API inválida. Campo 'qr_code' não encontrado.");
       }
     } catch (err) {
       console.error("Erro ao gerar PIX:", err);
@@ -114,7 +112,7 @@ export default function Payment() {
       setIsLoading(false);
     }
   };
-  // --- FIM NOVA FUNÇÃO ---
+  // --- FIM DA FUNÇÃO ---
 
   const handleCopyPix = () => {
     if (!pixCode) return;
@@ -126,7 +124,6 @@ export default function Payment() {
     setTimeout(() => setPixCopied(false), 3000);
   };
 
-  // MANTIDO: Conforme seu pedido, apenas mostra o toast de erro.
   const handleCheckPayment = () => {
     toast.error("Pagamento não identificado", {
       description:
@@ -145,9 +142,7 @@ export default function Payment() {
               🎯 Oferta Especial de Novembro
             </p>
           </div>
-
           <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2">
-            {/* ATUALIZADO: Nome dinâmico */}
             {userName.split(" ")[0]}, confirme as informações e
             <br />
             finalize o pagamento abaixo
@@ -163,17 +158,14 @@ export default function Payment() {
           <div className="space-y-2 text-sm md:text-base">
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Nome:</span>
-              {/* ATUALIZADO: Nome dinâmico */}
               <span className="font-semibold text-foreground">{userName}</span>
             </div>
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">CPF:</span>
-              {/* ATUALIZADO: CPF dinâmico */}
               <span className="font-semibold text-foreground">{userCpf}</span>
             </div>
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">WhatsApp:</span>
-              {/* ATUALIZADO: WhatsApp dinâmico */}
               <span className="font-semibold text-foreground">
                 {userWhatsApp}
               </span>
@@ -201,31 +193,16 @@ export default function Payment() {
 
         {/* PIX Payment Card */}
         <div className="bg-card rounded-2xl shadow-xl p-6 md:p-8 space-y-6 border border-border animate-slide-up">
-          {/* ATUALIZADO: QR Code Dinâmico ou Loading */}
-          <div className="bg-muted rounded-xl p-6 md:p-8 flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <div className="inline-flex items-center justify-center w-40 h-40 md:w-48 md:h-48 bg-card rounded-xl border-2 border-border">
-                {isLoading ? (
-                  <Skeleton className="w-full h-full" />
-                ) : error ? (
-                  <div className="p-4 text-destructive text-sm text-center">
-                    <AlertCircle className="w-12 h-12 mx-auto mb-2" />
-                    {error}
-                  </div>
-                ) : qrCodeImage ? (
-                  <img
-                    src={qrCodeImage}
-                    alt="QR Code PIX"
-                    className="w-full h-full"
-                  />
-                ) : (
-                  <QrCode className="w-28 h-28 md:w-32 md:h-32 text-muted-foreground" />
-                )}
-              </div>
-              <p className="text-xs md:text-sm text-muted-foreground">
-                {isLoading ? "Gerando QR Code..." : error ? "Falha ao gerar QR Code" : "Escaneie o QR Code com seu app de pagamento"}
-              </p>
-            </div>
+          
+          {/* REMOVIDO: QR Code removido pois a API não fornece a imagem */}
+          <div className="bg-muted rounded-xl p-6 md:p-8 text-center">
+            <AlertCircle className="w-12 h-12 text-secondary mx-auto mb-4" />
+            <h4 className="text-lg font-semibold text-foreground mb-2">
+              Use o PIX Copia e Cola
+            </h4>
+            <p className="text-sm text-muted-foreground">
+              {isLoading ? "Gerando código PIX..." : (error ? "Erro ao gerar o código." : "O QR Code não está disponível. Por favor, utilize o botão \"Copiar PIX\" abaixo.")}
+            </p>
           </div>
 
           {/* PIX Copy-Paste */}
@@ -233,25 +210,29 @@ export default function Payment() {
             <p className="text-2xl font-semibold text-foreground">
               PIX COPIA E COLA
             </p>
-
             <div className="flex flex-col gap-3">
-              {/* ATUALIZADO: Caixa do código dinâmica */}
-              <div className="w-full bg-muted rounded-lg p-3 text-sm text-muted-foreground font-mono break-all text-left min-h-[40px]">
+              {/* Caixa do código */}
+              <div className="w-full bg-muted rounded-lg p-3 text-sm text-muted-foreground font-mono break-all text-left min-h-[100px] overflow-y-auto">
                 {isLoading ? (
-                  <Skeleton className="h-5 w-3/4" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-5 w-1/2" />
+                  </div>
                 ) : error ? (
-                  <span className="text-destructive text-xs">{error}</span>
+                  <span className="text-destructive text-sm">{error}</span>
                 ) : (
+                  // Exibe o código PIX completo
                   pixCode
                 )}
               </div>
 
-              {/* ATUALIZADO: Botão "Copiar PIX" */}
+              {/* Botão "Copiar PIX" */}
               <Button
                 onClick={handleCopyPix}
                 size="lg"
                 className="w-full bg-primary hover:bg-primary-hover font-bold transition-all duration-300 text-4xl h-auto py-5"
-                disabled={isLoading || !!error || !pixCode} // Desabilita se carregando, com erro ou sem código
+                disabled={isLoading || !!error || !pixCode}
               >
                 {pixCopied ? (
                   <>
@@ -311,7 +292,7 @@ export default function Payment() {
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-primary">3.</span>
-                <span>Cole o código copiado ou escaneie o QR Code</span>
+                <span>Escolha "PIX Copia e Cola" e cole o código copiado</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-primary">4.</span>
@@ -331,7 +312,7 @@ export default function Payment() {
             size="lg"
             className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-success hover:bg-success/90"
             onClick={handleCheckPayment}
-            disabled={isLoading} // Desabilita enquanto o PIX está sendo gerado
+            disabled={isLoading}
           >
             Já realizei o pagamento
           </Button>
