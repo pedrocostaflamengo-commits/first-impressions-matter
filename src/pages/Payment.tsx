@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Copy, QrCode, CheckCircle2, HelpCircle, ChevronDown, AlertCircle, Target } from "lucide-react";
+import { Copy, QrCode, CheckCircle2, HelpCircle, ChevronDown, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { TrustBadge } from "@/components/TrustBadge";
@@ -14,24 +14,20 @@ import {
 export default function Payment() {
   const navigate = useNavigate();
   const [pixCopied, setPixCopied] = useState(false);
-  // Removemos os states que não serão mais usados dinamicamente
-  // const [userName, setUserName] = useState("");
-  // const [userCpf, setUserCpf] = useState("");
-  // const [userWhatsApp, setUserWhatsApp] = useState("");
+  // Os dados agora são estáticos conforme solicitado
+  const userName = "PEDRO HENRIQUE COSTA SOUSA";
+  const userCpf = "111.097.675-52";
+  const userWhatsApp = "(73) 99927-6645";
   const pixCode = "00020126330014BR.GOV.BCB.PIX0114+55119999999990204000053039865802BR5913NOME EMPRESA6009SAO PAULO62070503***63041D3D";
 
   useEffect(() => {
-    // Verificação de segurança, mas não precisamos mais guardar os dados no estado
+    // Apenas verifica se a sessão existe, mas não usa os dados
     const userData = sessionStorage.getItem("userData");
     const whatsapp = sessionStorage.getItem("whatsapp");
     if (!userData || !whatsapp) {
       navigate("/");
       return;
     }
-    // const { name, cpf } = JSON.parse(userData);
-    // setUserName(name);
-    // setUserCpf(cpf);
-    // setUserWhatsApp(whatsapp);
   }, [navigate]);
 
   const handleCopyPix = () => {
@@ -52,16 +48,14 @@ export default function Payment() {
             <p className="text-xs md:text-sm font-bold text-foreground">🎯 Oferta Especial de Novembro</p>
           </div>
           
-          {/* Texto do Header Alterado */}
+          {/* ALTERADO: Texto do header */}
           <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2">
-            PEDRO, confirme as informações e
+            {userName.split(" ")[0]}, confirme as informações e
             <br />
             finalize o pagamento abaixo
           </h1>
           
-          <div className="flex items-center justify-center">
-            <span className="text-6xl md:text-7xl font-bold text-primary">R$ 39,90</span>
-          </div>
+          {/* O valor R$ 39,90 foi removido daqui e movido para o alerta abaixo */}
         </div>
 
         {/* User Confirmation */}
@@ -70,23 +64,22 @@ export default function Payment() {
             <CheckCircle2 className="w-5 h-5 text-success" />
             Confirme seus dados
           </h3>
-          {/* Dados Estáticos Alterados */}
+          {/* ALTERADO: Dados estáticos e remoção do valor */}
           <div className="space-y-2 text-sm md:text-base">
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Nome:</span>
-              <span className="font-semibold text-foreground">PEDRO HENRIQUE COSTA SOUSA</span>
+              <span className="font-semibold text-foreground">{userName}</span>
             </div>
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">CPF:</span>
-              <span className="font-semibold text-foreground">111.097.675-52</span>
+              <span className="font-semibold text-foreground">{userCpf}</span>
             </div>
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">WhatsApp:</span>
-              <span className="font-semibold text-foreground">(73) 99927-6645</span>
+              <span className="font-semibold text-foreground">{userWhatsApp}</span>
             </div>
-            {/* Valor Removido */}
           </div>
-          {/* Texto de Quitação Alterado */}
+          {/* ALTERADO: Texto de quitação */}
           <div className="mt-4 p-5 bg-success/10 rounded-lg border-2 border-success/30">
             <p className="text-lg md:text-xl text-foreground font-bold text-center">
               ✓ Todas as suas dívidas serão quitadas por este valor único
@@ -94,20 +87,17 @@ export default function Payment() {
           </div>
         </div>
 
-        {/* Urgency Alert Alterado */}
-        <div className="bg-destructive/10 border-2 border-destructive rounded-xl p-6 md:p-8 animate-slide-up">
+        {/* Urgency Alert */}
+        {/* ALTERADO: Estilo (azul/secondary) e conteúdo do alerta */}
+        <div className="bg-secondary/10 border-2 border-secondary rounded-xl p-6 md:p-8 animate-slide-up">
           <div className="text-center space-y-4">
-            <AlertCircle className="w-10 h-10 md:w-12 md:h-12 text-destructive mx-auto" />
-            <p className="font-bold text-destructive text-xl md:text-2xl">
-              ⚠️ Última chance de garantir o desconto de R$ 50,00!
+            <AlertCircle className="w-10 h-10 md:w-12 md:h-12 text-secondary mx-auto" />
+            <p className="font-bold text-foreground text-xl md:text-2xl">
+              ⚠ Finalize o pagamento abaixo no valor de
             </p>
-            {/* Novo Texto de Oferta */}
-            <div className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-warning/20 border-2 border-warning rounded-full">
-               <Target className="w-6 h-6 text-foreground" />
-               <p className="text-xl md:text-2xl font-bold text-foreground">
-                 Oferta Especial de Novembro
-               </p>
-            </div>
+            <p className="text-6xl md:text-7xl font-bold text-primary">
+              R$ 39,90
+            </p>
           </div>
         </div>
 
