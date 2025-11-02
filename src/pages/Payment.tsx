@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-// CORRIGIDO: Adicionado AlertTriangle
+// CORRIGIDO: Adicionado AlertTriangle para corrigir o erro
 import { Copy, QrCode, CheckCircle2, HelpCircle, ChevronDown, AlertCircle, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TrustBadge } from "@/components/TrustBadge";
@@ -23,22 +23,17 @@ export default function Payment() {
   const navigate = useNavigate();
   const [pixCopied, setPixCopied] = useState(false);
   
-  // States para o PIX dinâmico
   const [isLoadingPix, setIsLoadingPix] = useState(true);
-  // REMOVIDO: pixQrCodeImage (vamos usar o pixCopyPaste para gerar o QR Code)
-  const [pixCopyPaste, setPixCopyPaste] = useState(""); // Começa vazio
+  const [pixCopyPaste, setPixCopyPaste] = useState(""); 
   
-  // Dados do usuário (fixos, conforme solicitado)
   const userName = "PEDRO HENRIQUE COSTA SOUSA";
   const userCpf = "111.097.675-52";
   const userWhatsApp = "(73) 99927-6645";
   const paymentAmount = "39.90";
 
-  // ADICIONADO: Ref para guardar o timer
   const pixTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Apenas verifica se a sessão existe
     const userData = sessionStorage.getItem("userData");
     const whatsapp = sessionStorage.getItem("whatsapp");
     if (!userData || !whatsapp) {
@@ -46,13 +41,11 @@ export default function Payment() {
       return;
     }
 
-    // Função para buscar os dados do PIX na API
     const generatePix = async () => {
       console.log("Gerando novo PIX...");
       setIsLoadingPix(true);
-      setPixCopyPaste(""); // Limpa o PIX anterior
+      setPixCopyPaste(""); 
       
-      // Limpa timer anterior, se existir
       if (pixTimerRef.current) {
         clearTimeout(pixTimerRef.current);
       }
@@ -84,11 +77,8 @@ export default function Payment() {
         }
 
         const data = await response.json();
-
-        // Salva o CÓDIGO (copia e cola)
         setPixCopyPaste(data.qr_code);
 
-        // ADICIONADO: Agenda a próxima geração de PIX
         pixTimerRef.current = setTimeout(generatePix, PIX_EXPIRATION_MS);
 
       } catch (error) {
@@ -102,19 +92,17 @@ export default function Payment() {
       }
     };
 
-    generatePix(); // Gera o PIX na primeira carga
+    generatePix();
     
-    // ADICIONADO: Limpa o timer quando o componente é desmontado
     return () => {
       if (pixTimerRef.current) {
         clearTimeout(pixTimerRef.current);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]); // Dependência de navegação está ok
+  }, [navigate]);
 
   const handleCopyPix = () => {
-    // CORRIGIDO: Lógica do botão
     if (isLoadingPix || !pixCopyPaste || pixCopyPaste.startsWith("Erro")) return;
     
     navigator.clipboard.writeText(pixCopyPaste);
@@ -132,7 +120,6 @@ export default function Payment() {
     });
   };
   
-  // Define se o PIX está em um estado válido
   const isPixValid = !isLoadingPix && pixCopyPaste && !pixCopyPaste.startsWith("Erro");
 
   return (
@@ -182,6 +169,7 @@ export default function Payment() {
         <div className="bg-secondary/10 border-2 border-secondary rounded-xl p-6 md:p-8 animate-slide-up">
           <div className="text-center space-y-4">
             <AlertCircle className="w-10 h-10 md:w-12 md:h-12 text-secondary mx-auto" />
+            {/* ALTERADO: Texto do alerta (removido '⚠') */}
             <p className="font-bold text-foreground text-xl md:text-2xl">
               Finalize o pagamento abaixo no valor
             </p>
@@ -204,10 +192,9 @@ export default function Payment() {
                     <span className="font-semibold">Gerando PIX...</span>
                   </div>
                 ) : isPixValid ? (
-                  // ADICIONADO: Gerador de QR Code
                   <QRCodeCanvas 
                     value={pixCopyPaste} 
-                    size={208} // Tamanho interno do QR Code
+                    size={208} 
                     bgColor="#ffffff"
                     fgColor="#000000"
                     level="L"
@@ -227,7 +214,8 @@ export default function Payment() {
 
           {/* PIX Copy-Paste */}
           <div className="space-y-4 text-center">
-            <p className="text-xl font-semibold text-foreground">
+            {/* ALTERADO: Texto "PIX COPIA E COLA" maior */}
+            <p className="text-2xl font-semibold text-foreground">
               PIX COPIA E COLA
             </p>
             
@@ -241,21 +229,21 @@ export default function Payment() {
                 )}
               </div>
               
+              {/* ALTERADO: Botão "Copiar PIX" maior */}
               <Button
                 onClick={handleCopyPix}
                 size="lg"
-                className="w-full bg-primary hover:bg-primary-hover font-bold transition-all duration-300 text-3xl h-auto py-5" // text-3xl e py-5
-                // CORRIGIDO: Lógica do disabled
+                className="w-full bg-primary hover:bg-primary-hover font-bold transition-all duration-300 text-4xl h-auto py-5" // text-4xl
                 disabled={!isPixValid}
               >
                 {pixCopied ? (
                   <>
-                    <CheckCircle2 className="w-8 h-8 mr-2" />
+                    <CheckCircle2 className="w-9 h-9 mr-3" /> {/* Ícone maior */}
                     Copiado!
                   </>
                 ) : (
                   <>
-                    <Copy className="w-8 h-8 mr-2" />
+                    <Copy className="w-9 h-9 mr-3" /> {/* Ícone maior */}
                     Copiar PIX
                   </>
                 )}
@@ -263,6 +251,8 @@ export default function Payment() {
             </div>
           </div>
 
+          {/* Trust Badges */}
+          {/* ALTERADO: Apenas 1 badge "Pagamento seguro" centralizado */}
           <div className="flex justify-center gap-3 pt-4 border-t border-border">
             <TrustBadge variant="security" text="Pagamento seguro" />
           </div>
