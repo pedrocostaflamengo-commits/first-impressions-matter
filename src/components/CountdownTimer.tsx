@@ -30,19 +30,19 @@ export const CountdownTimer = ({
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
-  const isUrgent = timeLeft < 300; // Less than 5 minutes
+  const isUrgent = timeLeft < 300; // Menos de 5 minutos
 
   return (
     <div className={cn(
-      "inline-flex items-center gap-3 px-6 py-4 rounded-xl",
-      "bg-gradient-to-r font-bold text-lg transition-all duration-300",
+      "inline-flex items-center gap-3 px-6 py-3 rounded-xl shadow-lg",
+      "font-bold text-2xl transition-all duration-300 border-2",
       isUrgent 
-        ? "from-destructive to-destructive/80 text-destructive-foreground animate-pulse-soft" 
-        : "from-secondary to-secondary/80 text-secondary-foreground",
+        ? "bg-destructive/10 border-destructive text-destructive animate-pulse" 
+        : "bg-background border-primary/20 text-primary",
       className
     )}>
-      <Clock className="w-5 h-5" />
-      <span>
+      <Clock className="w-6 h-6" />
+      <span className="font-mono tracking-widest">
         {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
       </span>
     </div>
