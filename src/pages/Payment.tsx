@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Copy, QrCode, CheckCircle2, HelpCircle, ChevronDown, AlertCircle, Loader2 } from "lucide-react";
+// ALTERADO: Adicionado AlertTriangle para corrigir o erro
+import { Copy, QrCode, CheckCircle2, HelpCircle, ChevronDown, AlertCircle, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TrustBadge } from "@/components/TrustBadge";
 import { toast } from "sonner";
@@ -9,7 +10,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Skeleton } from "@/components/ui/skeleton"; // Importei o Skeleton
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Token da API (como solicitado, está aqui para testes)
 const API_TOKEN = "298|TFk8AllUCxCBnb3aM7mYJX4RGe9UBHv3uy2KSfbO4c130b92";
@@ -99,7 +100,6 @@ export default function Payment() {
   };
   
   const handleCheckPayment = () => {
-    // ALTERADO: Mostra toast de "pagamento não efetuado"
     toast.error("Pagamento não identificado", {
       description: "Seu pagamento ainda não foi confirmado. Por favor, aguarde alguns minutos e tente novamente.",
       duration: 4000,
@@ -115,7 +115,6 @@ export default function Payment() {
             <p className="text-xs md:text-sm font-bold text-foreground">🎯 Oferta Especial de Novembro</p>
           </div>
           
-          {/* ALTERADO: Texto do header (sem valor) */}
           <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2">
             {userName.split(" ")[0]}, confirme as informações e
             <br />
@@ -151,10 +150,10 @@ export default function Payment() {
         </div>
 
         {/* Urgency Alert */}
-        {/* ALTERADO: Estilo e texto do alerta */}
         <div className="bg-secondary/10 border-2 border-secondary rounded-xl p-6 md:p-8 animate-slide-up">
           <div className="text-center space-y-4">
             <AlertCircle className="w-10 h-10 md:w-12 md:h-12 text-secondary mx-auto" />
+            {/* ALTERADO: Texto do alerta (removido '⚠') */}
             <p className="font-bold text-foreground text-xl md:text-2xl">
               Finalize o pagamento abaixo no valor
             </p>
@@ -180,6 +179,7 @@ export default function Payment() {
                   pixQrCodeImage ? (
                     <img src={pixQrCodeImage} alt="QR Code PIX" className="w-full h-full rounded-lg" />
                   ) : (
+                    // Aqui usamos o AlertTriangle importado
                     <div className="flex flex-col items-center gap-4 text-destructive">
                       <AlertTriangle className="w-12 h-12" />
                       <span className="font-semibold text-center">Erro ao gerar QR Code.<br/>Atualize a página.</span>
@@ -208,21 +208,21 @@ export default function Payment() {
                 )}
               </div>
               
-              {/* ALTERADO: Botão "Copiar PIX" maior e centralizado */}
+              {/* ALTERADO: Botão "Copiar PIX" maior */}
               <Button
                 onClick={handleCopyPix}
                 size="lg"
-                className="w-full bg-primary hover:bg-primary-hover font-bold transition-all duration-300 text-2xl h-auto py-4"
+                className="w-full bg-primary hover:bg-primary-hover font-bold transition-all duration-300 text-3xl h-auto py-5" // text-3xl e py-5
                 disabled={isLoadingPix || !pixQrCodeImage}
               >
                 {pixCopied ? (
                   <>
-                    <CheckCircle2 className="w-7 h-7 mr-2" />
+                    <CheckCircle2 className="w-8 h-8 mr-2" /> {/* Ícone maior */}
                     Copiado!
                   </>
                 ) : (
                   <>
-                    <Copy className="w-7 h-7 mr-2" />
+                    <Copy className="w-8 h-8 mr-2" /> {/* Ícone maior */}
                     Copiar PIX
                   </>
                 )}
@@ -285,7 +285,6 @@ export default function Payment() {
         </Collapsible>
 
         {/* Action Button */}
-        {/* ALTERADO: Adicionado onClick para verificar pagamento */}
         <div className="animate-slide-up">
           <Button 
             size="lg"
