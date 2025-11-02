@@ -36,7 +36,8 @@ const testimonials: Testimonial[] = [
 
 export function Testimonials() {
   const averageRating = 4.9;
-  const totalReviews = testimonials.length;
+  // ALTERADO: Número de avaliações
+  const totalReviews = 4567;
 
   return (
     <div className="space-y-6">
