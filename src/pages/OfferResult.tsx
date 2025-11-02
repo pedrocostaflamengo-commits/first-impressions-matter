@@ -17,9 +17,9 @@ export default function OfferResult() {
       navigate("/");
       return;
     }
-    const { name, cpf } = JSON.parse(userData);
+    const { name } = JSON.parse(userData);
+    // ALTERADO: Usa o nome completo
     setUserName(name || "Cliente"); 
-    // setUserCpf(cpf || "***.***.***-**"); // Apenas carregado, mas não usado no h2
   }, [navigate]);
 
   return (
@@ -127,6 +127,7 @@ export default function OfferResult() {
             Limpar meu nome agora por R$ 39,90!!!
           </Button>
 
+          {/* ALTERADO: Apenas 1 badge "Confirmação automática" centralizado */}
           <div className="flex justify-center gap-3 md:gap-4 pt-4">
             <TrustBadge variant="verified" text="Confirmação automática" />
           </div>
