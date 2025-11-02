@@ -9,7 +9,7 @@ import { Testimonials } from "@/components/Testimonials";
 export default function OfferResult() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("Cliente");
-  const [userCpf, setUserCpf] = useState("***.***.***-**");
+  // const [userCpf, setUserCpf] = useState("***.***.***-**"); // Não é mais usado no H2
 
   useEffect(() => {
     const userData = sessionStorage.getItem("userData");
@@ -18,9 +18,8 @@ export default function OfferResult() {
       return;
     }
     const { name, cpf } = JSON.parse(userData);
-    // Usando o nome completo estático conforme solicitado
     setUserName(name || "Cliente"); 
-    setUserCpf(cpf || "***.***.***-**");
+    // setUserCpf(cpf || "***.***.***-**"); // Apenas carregado, mas não usado no h2
   }, [navigate]);
 
   return (
@@ -33,9 +32,9 @@ export default function OfferResult() {
               <AlertTriangle className="w-8 h-8 text-destructive" />
             </div>
             <div className="flex-1">
-              {/* ALTERADO: Texto do alerta estático e justificado */}
+              {/* ALTERADO: Agora usa a variável userName e o CPF estático */}
               <h2 className="text-2xl md:text-3xl font-bold text-destructive mb-3 text-justify">
-                NOME COMPLETO, identificamos registros de inadimplência vinculados ao seu CPF 111.097.675-52, que estão impactando negativamente o seu histórico de crédito.
+                {userName}, identificamos registros de inadimplência vinculados ao seu CPF 111.097.675-52, que estão impactando negativamente o seu histórico de crédito.
               </h2>
               <p className="text-base md:text-lg text-foreground text-justify">
                 Atualmente, seu CPF está restrito para operações de
@@ -128,7 +127,6 @@ export default function OfferResult() {
             Limpar meu nome agora por R$ 39,90!!!
           </Button>
 
-          {/* ALTERADO: Apenas 1 badge centralizado */}
           <div className="flex justify-center gap-3 md:gap-4 pt-4">
             <TrustBadge variant="verified" text="Confirmação automática" />
           </div>
