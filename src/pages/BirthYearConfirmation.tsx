@@ -52,8 +52,9 @@ export default function BirthYearConfirmation() {
           <h1 className="text-3xl md:text-4xl font-bold text-foreground">
             Olá, {userName}!
           </h1>
+          {/* ALTERADO: Texto de segurança */}
           <p className="text-lg text-muted-foreground">
-            Para sua segurança, precisamos confirmar que você é você mesmo.
+            Para sua segurança, precisamos confirmar sua identidade.
           </p>
         </div>
 
