@@ -40,8 +40,8 @@ export default function CpfCollection() {
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-            Renegocie suas dívidas com até{" "}
-            <span className="text-primary">90% de desconto</span>
+            Renegocie suas dívidas com{" "}
+            <span className="text-primary">90% de desconto!</span>
           </h1>
           
           <p className="text-lg text-muted-foreground">

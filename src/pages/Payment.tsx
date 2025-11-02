@@ -50,13 +50,15 @@ export default function Payment() {
             <p className="text-xs md:text-sm font-bold text-foreground">🎯 Oferta Especial de Novembro</p>
           </div>
           
-          <h1 className="text-2xl md:text-4xl font-bold text-foreground">
-            {userName.split(" ")[0]}, confirme seus dados e finalize o pagamento
+          <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-2">
+            {userName.split(" ")[0]}, confirme as informações e
           </h1>
+          <h2 className="text-3xl md:text-5xl font-bold text-primary">
+            finalize o pagamento abaixo
+          </h2>
           
-          <div className="flex items-center justify-center gap-3 md:gap-4 flex-wrap">
-            <span className="text-lg md:text-xl text-muted-foreground line-through">R$ 89,90</span>
-            <span className="text-4xl md:text-5xl font-bold text-primary">R$ 39,90</span>
+          <div className="flex items-center justify-center">
+            <span className="text-5xl md:text-6xl font-bold text-primary">R$ 39,90</span>
           </div>
         </div>
 
@@ -84,28 +86,26 @@ export default function Payment() {
               <span className="font-bold text-primary text-lg">R$ 39,90</span>
             </div>
           </div>
-          <div className="mt-4 p-3 bg-success/10 rounded-lg border border-success/20">
-            <p className="text-xs md:text-sm text-foreground">
-              <strong>✓ Todas as suas dívidas</strong> serão renegociadas por este valor único
+          <div className="mt-4 p-5 bg-success/10 rounded-lg border-2 border-success/30">
+            <p className="text-lg md:text-xl text-foreground font-bold text-center">
+              ✓ Todas as suas dívidas serão renegociadas por este valor único
             </p>
           </div>
         </div>
 
-        {/* Urgency Alert - MOVED HERE */}
-        <div className="bg-destructive/10 border-2 border-destructive rounded-xl p-4 md:p-6 animate-slide-up">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-6 h-6 text-destructive flex-shrink-0 mt-1" />
-            <div className="flex-1">
-              <p className="font-bold text-destructive text-base md:text-lg mb-2">
-                ⚠️ Última chance de garantir o desconto de R$ 50,00!
-              </p>
-              <p className="text-sm md:text-base text-foreground mb-3">
-                Após o pagamento, sua consulta será liberada automaticamente em poucos minutos
-              </p>
-              <div className="flex justify-center">
-                <CountdownTimer initialMinutes={60} />
-              </div>
-            </div>
+        {/* Urgency Alert */}
+        <div className="bg-destructive/10 border-2 border-destructive rounded-xl p-6 md:p-8 animate-slide-up">
+          <div className="text-center space-y-3">
+            <AlertCircle className="w-10 h-10 md:w-12 md:h-12 text-destructive mx-auto" />
+            <p className="font-bold text-destructive text-xl md:text-2xl">
+              ⚠️ Última chance de garantir o desconto de R$ 50,00!
+            </p>
+            <p className="text-lg md:text-xl text-foreground font-bold">
+              Realize o pagamento abaixo
+            </p>
+            <p className="text-base md:text-lg text-foreground">
+              e sua consulta será liberada automaticamente em poucos minutos
+            </p>
           </div>
         </div>
 
@@ -205,20 +205,13 @@ export default function Payment() {
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Action Buttons */}
-        <div className="grid gap-3 animate-slide-up">
+        {/* Action Button */}
+        <div className="animate-slide-up">
           <Button 
             size="lg"
-            className="w-full h-12 md:h-14 text-base md:text-lg font-bold bg-success hover:bg-success/90"
+            className="w-full h-14 md:h-16 text-lg md:text-xl font-bold bg-success hover:bg-success/90"
           >
             Já realizei o pagamento
-          </Button>
-          <Button 
-            size="lg"
-            variant="outline"
-            className="w-full h-12 md:h-14 text-base md:text-lg font-bold"
-          >
-            Preciso de ajuda
           </Button>
         </div>
       </div>
