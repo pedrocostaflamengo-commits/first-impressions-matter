@@ -224,7 +224,7 @@ export default function Payment() {
               </div>
               <p className="text-xs md:text-sm text-muted-foreground">
                 {isLoading ? "Gerando QR Code..." : error ? "Falha ao gerar QR Code" : "Escaneie o QR Code com seu app de pagamento"}
-              </T p>
+              </p>
             </div>
           </div>
 
@@ -242,7 +242,7 @@ export default function Payment() {
                 ) : error ? (
                   <span className="text-destructive text-xs">{error}</span>
                 ) : (
-                  pixCode.substring(0, 50) + "..."
+                  pixCode
                 )}
               </div>
 
