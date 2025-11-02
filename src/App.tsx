@@ -7,6 +7,7 @@ import CpfCollection from "./pages/CpfCollection";
 import Verification from "./pages/Verification";
 import BirthYearConfirmation from "./pages/BirthYearConfirmation";
 import OfferResult from "./pages/OfferResult";
+import WhatsAppContact from "./pages/WhatsAppContact";
 import Payment from "./pages/Payment";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/verificacao" element={<Verification />} />
           <Route path="/confirmacao" element={<BirthYearConfirmation />} />
           <Route path="/resultado" element={<OfferResult />} />
+          <Route path="/contato-whatsapp" element={<WhatsAppContact />} />
           <Route path="/pagamento" element={<Payment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

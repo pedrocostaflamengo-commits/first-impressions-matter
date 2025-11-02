@@ -40,12 +40,12 @@ export default function CpfCollection() {
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-            Descubra se você tem dívidas ativas com até{" "}
+            Renegocie suas dívidas com até{" "}
             <span className="text-primary">90% de desconto</span>
           </h1>
           
           <p className="text-lg text-muted-foreground">
-            Informe seus dados e confira se seu nome está negativado nos nossos bancos de dados parceiros.
+            Consulte agora as condições especiais para limpar seu nome e voltar a ter crédito.
           </p>
         </div>
 
