@@ -228,7 +228,7 @@ export default function Payment() {
 
           {/* PIX Copy-Paste */}
           <div className="space-y-4 text-center">
-            {/* ALTERADO: Texto "PIX COPIA E COLA" maior */}
+            {/* ALTERADO: Texto "PIX COPIA E COLA" maior (text-2xl) */}
             <p className="text-2xl font-semibold text-foreground">
               PIX COPIA E COLA
             </p>
@@ -243,7 +243,7 @@ export default function Payment() {
                 )}
               </div>
               
-              {/* ALTERADO: Botão "Copiar PIX" maior */}
+              {/* ALTERADO: Botão "Copiar PIX" maior (text-4xl) */}
               <Button
                 onClick={handleCopyPix}
                 size="lg"
