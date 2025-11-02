@@ -18,8 +18,8 @@ export default function OfferResult() {
       return;
     }
     const { name, cpf } = JSON.parse(userData);
-    setUserName(name.split(" ")[0]);
-    setUserCpf(cpf);
+    setUserName(name || "Cliente"); // Usa o nome completo
+    setUserCpf(cpf || "***.***.***-**");
   }, [navigate]);
 
   return (
@@ -32,13 +32,13 @@ export default function OfferResult() {
               <AlertTriangle className="w-8 h-8 text-destructive" />
             </div>
             <div className="flex-1">
-              {/* ALTERADO: Texto do alerta */}
-              <h2 className="text-2xl md:text-3xl font-bold text-destructive mb-3">
+              {/* ALTERADO: Texto do alerta e justificado */}
+              <h2 className="text-2xl md:text-3xl font-bold text-destructive mb-3 text-justify">
                 {userName}, identificamos registros de inadimplência vinculados
                 ao seu CPF {userCpf}, que estão impactando negativamente o
                 seu histórico de crédito.
               </h2>
-              <p className="text-base md:text-lg text-foreground">
+              <p className="text-base md:text-lg text-foreground text-justify">
                 Atualmente, seu CPF está restrito para operações de
                 financiamento, parcelamento e obtenção de crédito.
               </p>
@@ -55,29 +55,17 @@ export default function OfferResult() {
           {/* ALTERADO: Lista de benefícios */}
           <div className="grid gap-4 md:gap-5">
             {[
-              {
-                icon: CheckCircle2,
-                text: "✅ Negocie todas as suas dívidas com até 90% de desconto",
-              },
-              {
-                icon: Zap,
-                text: "⚡ Recupere seu crédito em até 72 horas",
-              },
-              {
-                icon: CheckCircle2,
-                text: "🏠 Volte a realizar financiamentos e parcelamentos",
-              },
-              {
-                icon: CheckCircle2,
-                text: "🧾 Elimine automaticamente as restrições do seu CPF",
-              },
-            ].map((benefit, index) => (
+              "✅ Negocie todas as suas dívidas com até 90% de desconto",
+              "⚡ Recupere seu crédito em até 72 horas",
+              "🏠 Volte a realizar financiamentos e parcelamentos",
+              "🧾 Elimine automaticamente as restrições do seu CPF",
+            ].map((text, index) => (
               <div
                 key={index}
                 className="flex items-start gap-3 md:gap-4 p-4 md:p-5 bg-success/10 rounded-lg border-2 border-success/30"
               >
                 <p className="text-base md:text-lg text-foreground font-semibold">
-                  {benefit.text}
+                  {text}
                 </p>
               </div>
             ))}
@@ -145,14 +133,11 @@ export default function OfferResult() {
             Limpar meu nome agora por R$ 39,90!!!
           </Button>
 
-          <div className="flex flex-wrap justify-center gap-3 md:gap-4 pt-4">
-            <TrustBadge variant="security" text="Pagamento seguro" />
+          {/* ALTERADO: Apenas 1 badge centralizado */}
+          <div className="flex justify-center gap-3 md:gap-4 pt-4">
             <TrustBadge variant="verified" text="Confirmação automática" />
-            <TrustBadge variant="guarantee" text="Garantia" />
           </div>
         </div>
-        
-        {/* ALTERADO: Bloco de avaliações duplicado removido */}
       </div>
     </div>
   );
